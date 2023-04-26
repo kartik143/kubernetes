@@ -1,0 +1,87 @@
+apiVersion: eksctl.io/v1alpha5
+
+kind: ClusterConfig
+
+metadata:
+
+  name: eks
+
+  region: ap-south-1
+
+vpc:
+
+  id: "vpc-024d676d51b56eefb"
+
+  cidr: "10.0.0.0/16"
+
+  subnets:
+
+    private:
+
+      ap-south-1a:
+
+          id: "subnet-04ccec26524b7bc92"
+
+          cidr: "10.0.2.0/24"
+
+      ap-south-1b:
+
+          id: "subnet-0929e417ce4c2576a"
+
+          cidr: "10.0.3.0/24"
+
+    public:
+
+      ap-south-1a:
+
+          id: "subnet-096a00ec8c4c0a632"
+
+          cidr: "10.0.0.0/24"
+
+      ap-south-1b:
+
+          id: "subnet-06cd31b4526e029f7"
+
+          cidr: "10.0.1.0/24"
+
+nodeGroups:
+
+  - name: eks-Preprod
+
+    labels: {role: Workers}
+
+    instanceType: t3a.medium
+
+    desiredCapacity: 1
+
+    minSize: 1
+
+    maxSize: 10
+
+    privateNetworking: true
+
+    securityGroups:
+
+      withShared: true
+
+      withLocal: true
+
+      attachIDs: ['sg-016a95a86e20a3ea7', 'sg-0e219a64f4054d40e']
+
+    ssh:
+
+      allow: true
+
+      publicKeyName: 'test'
+
+    tags:
+
+      'environment:PreProd': 'eks-test'
+
+    iam:
+
+      withAddonPolicies:
+
+        autoScaler: true
+
+—------------------------------
