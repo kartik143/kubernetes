@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-shiv
+  namespace: default
+  labels:
+    app: test-shiv
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  revisionHistoryLimit: 2
+  paused: false
+  minReadySeconds: 10
+  selector:
+    matchLabels:
+      app: test-shiv
+  template:
+    metadata:
+      name: test-shiv
+      labels:
+        app: test-shiv
+    spec:
+      containers:
+        - name: test-shiv
+          image: nginx
+          ports:
+            - containerPort:  80
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              scheme: HTTP
+              path: /ping
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 3
+            successThreshold: 1
+            failureThreshold: 3
+          resources:
+            limits:
+              cpu: "1000m"
+              memory: "1000Mi"
+            requests:
+              cpu: "100m"
+              memory: "400Mi"
+      nodeSelector:
+         alpha.eksctl.io/nodegroup-name: Workers
